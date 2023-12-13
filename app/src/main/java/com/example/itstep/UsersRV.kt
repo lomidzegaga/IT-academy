@@ -5,26 +5,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.itstep.databinding.SingleItemBinding
 
-class UsersRV(
-    private val list: MutableList<NameModel>,
-    private val iconList: List<Int>
-): RecyclerView.Adapter<UsersRV.UserViewHolder>() {
+class UsersRV(): RecyclerView.Adapter<UsersRV.UserViewHolder>() {
 
-    var itemCallback: ((Int, String) -> Unit)? = null
+    var itemCallback: ((String) -> Unit)? = null
+
+    private var noteList = emptyList<Note>()
 
     inner class UserViewHolder(
         private val binding: SingleItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             val item = getItem(adapterPosition)
-            val randomIcon = iconList.random()
 
             binding.apply {
-                textView.text = item.name
-                imageView.setImageResource(randomIcon)
+                titleTV.text = item.title
+                noteTV.text = item.note
 
                 root.setOnClickListener {
-                    itemCallback?.invoke(randomIcon, item.name)
+                    itemCallback?.invoke(item.title)
                 }
             }
         }
@@ -41,14 +39,18 @@ class UsersRV(
         )
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = noteList.size
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         holder.bind()
     }
 
-    private fun getItem(position: Int): NameModel {
-        return list[position]
+    private fun getItem(position: Int): Note {
+        return noteList[position]
     }
 
+    fun updateList(newList: List<Note>) {
+        noteList = newList
+        notifyDataSetChanged()
+    }
 }
